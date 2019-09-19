@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <!--http://localhost:3000/で開く用ページ-->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      .sub{
+        margin-top: 15px;
+        font-size: 13pt;
+        color: #FFFFFF;
+        background-color: #b8aa84;
+      }
+      .sub:hover{
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body>
+    <% require 'pg' %>
+    <% connection = PG::connect(dbname: "goya") %>
+    <% connection.internal_encoding = "UTF-8" %>
+
+    <h1>課題 DAY6 Web技術シリーズ課題</h1>
+    <h3>2019年9月 オンライン Webエンジニアコース：就職達成プログラム（パートタイム生）金井 崇</h3>
+    <table border="1" width="550" cellspacing="0" cellpadding="5" bordercolor="#81b6db">
+      <tr>
+        <th bgcolor="#7dcbd4"><font color="#ffffff">メニュー</font></th>
+        <th bgcolor="#7dcbd4"><font color="#ffffff">ボタン</font></th>
+      </tr>
+      <tr>
+        <td>譲渡先が自家消費ではないもののgoyaの情報</td>
+        <td align = "center">
+          <form action="exam_result1.cgi" method="POST">
+            <% result = connection.exec("select give_for,length,weight,quality,date from crops where give_for != '自家消費';") %>
+            <% date = [] %>
+
+            <% result.each do |record| %>
+              <%  date << ""%>
+              <%  date << "譲渡先：#{record["give_for"]} ◆◆ 長さ：#{record["length"]} ◆◆ ゴーヤの大きさ：#{record["weight"]} ◆◆ 品質：#{record["quality"]} ◆◆ 譲渡日：#{record["date"]} <br>" %>
+            <% end %>
+
+            <input type="hidden" type="text" name="exam_result1" value="<%= date.join('') %>">
+            <input class="sub" type="submit" value="情報ページへ" >
+          </form>
+        </td>
+      </tr>
+      <tr>
+        <td>品質が悪いもの（false）のgoyaの情報</td>
+        <td align = "center">
+          <form action="exam_result2.cgi" method="POST">
+            <% result = connection.exec("select quality,length,weight,give_for,date from crops where quality = 'f';") %>
+            <% date = [] %>
+
+            <% result.each do |record| %>
+              <%  date << ""%>
+              <%  date << "品質：#{record["quality"]}alse ◆◆ 長さ：#{record["length"]} ◆◆ ゴーヤの大きさ：#{record["weight"]} ◆◆ 譲渡先：#{record["give_for"]} ◆◆ 譲渡日：#{record["date"]} <br>" %>
+            <% end %>
+
+            <input type="hidden" type="text" name="exam_result2" value="<%= date.join('') %>">
+            <input class="sub" type="submit" value="情報ページへ" >
+          </form>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
